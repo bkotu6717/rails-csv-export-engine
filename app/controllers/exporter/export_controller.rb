@@ -9,9 +9,9 @@ module Exporter
       klass.sentry_approved?(current_user)
   	  headers_and_mappings = klass.column_headers_and_mappings
   	  objects = klass.exportable_entities(params)
-  	  export_data = generate_csv(headers_and_mappings, objects)
+  	  @export_data = generate_csv(headers_and_mappings, objects)
   	  file_name = "#{params[:entity]}.csv"
-      send_data export_data, type: 'text/csv; charset=iso-8859-1; header=present', disposition: "attachment; filename=#{file_name}"
+      send_data @export_data, type: 'text/csv; charset=iso-8859-1; header=present', disposition: "attachment; filename=#{file_name}"
   	end
 
     private
