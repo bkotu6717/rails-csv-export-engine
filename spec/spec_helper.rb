@@ -20,6 +20,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 
 require File.expand_path("../dummy/config/environment.rb", __FILE__)
+
 require 'rspec/rails'
 require 'factory_girl_rails'
 require 'database_cleaner'
@@ -57,6 +58,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.infer_base_class_for_anonymous_controllers = false
   config.order = "random"
+
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

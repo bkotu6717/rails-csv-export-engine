@@ -1,27 +1,6 @@
 require 'rails_helper'
 
 describe Exporter::EntityExporter do
-  before(:all) do
-    class User
-      def is_authorised?
-        true
-      end
-    end
-
-    class Room
-      attr_accessor :name, :number, :capacity 
-      include Exporter::EntityExporter
-      set_export_validator {|user| 
-        raise RuntimeError, 'Unauthorised' unless user.is_authorised?
-      }
-
-      def initialize(options = {})
-        @name = options[:name]
-        @number = options[:number]
-        @capacity = options[:capacity]
-      end
-    end
-  end
 
   describe ".sentry_approved?" do
     it "should be sentry approved user" do
