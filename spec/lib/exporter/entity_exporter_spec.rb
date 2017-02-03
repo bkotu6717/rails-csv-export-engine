@@ -35,4 +35,15 @@ describe Exporter::EntityExporter do
       expect(room.exportable_attributes([:name, :number, :capacity])).to eq(["Amruthesh", "45678", 20])
     end
   end
+
+  describe ".validated_privilege?(current_user)" do
+    it "validates if there is a privilege" do
+      user = User.new
+      Room.restrict_export_by_privilege(:privilege_name)
+      expect{ Room.sentry_approved?(user) }.not_to raise_error
+      allow(user).to receive(:is_authorized?).and_return(false)
+      expect{ Room.sentry_approved?(user) }.to raise_error
+      Room.restrict_export_by_privilege(nil)
+    end
+  end
 end

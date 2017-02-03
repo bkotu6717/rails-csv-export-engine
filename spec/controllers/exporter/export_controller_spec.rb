@@ -33,7 +33,7 @@ RSpec.describe Exporter::ExportController, :type => :controller  do
 	 		get :generate, {entity: :room, format: :csv}
 	 		expect(response.status).to eq(200)
 	 		expect(response.headers['Content-Type']).to include('text/csv')
-	 		expect(response.headers['Content-Disposition']).to include("attachment; filename=room.csv")
+	 		expect(response.headers['Content-Disposition']).to include("attachment; filename=room_")
 	 	end
 	 	it "validates response" do
 	 		@rooms = []

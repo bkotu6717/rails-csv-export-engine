@@ -6,13 +6,24 @@ module Exporter
     end
 
     module ClassMethods
+      def restrict_export_by_privilege(privilege_name)
+        @privilege = privilege_name
+      end
+
       def set_export_validator(&block)
         @validate_block = block
       end
 
       def sentry_approved?(current_user)
+        return true if validated_privilege?(current_user)
         return true if @validate_block.blank?
         @validate_block.call(current_user)
+      end
+
+      def validated_privilege?(current_user)
+        return false if !defined?(@privilege) or @privilege.blank?
+        raise RuntimeError, 'Unauthorised' unless current_user.is_authorized?(@privilege.to_sym)
+        true
       end
 
       def exportable_entities(options = {})

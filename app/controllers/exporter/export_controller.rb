@@ -10,7 +10,7 @@ module Exporter
   	  headers_and_mappings = klass.column_headers_and_mappings
   	  objects = klass.exportable_entities(params)
   	  @export_data = generate_csv(headers_and_mappings, objects)
-  	  file_name = "#{params[:entity]}.csv"
+  	  file_name = "#{params[:entity]}_#{Time.now.strftime("%m/%d/%y_%H:%M_%z")}.csv"
       send_data @export_data, type: 'text/csv; charset=iso-8859-1; header=present', disposition: "attachment; filename=#{file_name}"
   	end
 
