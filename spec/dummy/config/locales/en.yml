@@ -21,3 +21,10 @@
 
 en:
   hello: "Hello world"
+  exportables:
+    Room:
+      header_mappings:
+        name: "Meeting Room"
+        number: "Number"
+        capacity: "Capacity"
+
