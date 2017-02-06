@@ -10,7 +10,12 @@ RSpec.describe Exporter::ExportController, :type => :controller  do
 	  		protected
 
 	  		def initialize_response_hash
-	  			{}
+	  			{
+		        :status => '',
+		        :message => '',
+		        :data => {},
+		        :errors => {}
+      		}
 	  		end
 
 	  		def current_user

@@ -6,18 +6,18 @@ module Exporter
     end
 
     module ClassMethods
-      def restrict_export_by_privilege(privilege_name)
-        @privilege = privilege_name
-      end
-
-      def set_export_validator(&block)
+     
+      def set_export_validator(privilege = nil, &block)
+        @privilege = privilege
         @validate_block = block
       end
 
       def sentry_approved?(current_user)
-        return true if validated_privilege?(current_user)
-        return true if @validate_block.blank?
-        @validate_block.call(current_user)
+        if !@validate_block.blank?
+          return @validate_block.call(current_user)
+        else
+          return validated_privilege?(current_user)
+        end
       end
 
       def validated_privilege?(current_user)

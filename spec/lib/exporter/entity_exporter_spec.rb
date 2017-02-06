@@ -4,12 +4,12 @@ describe Exporter::EntityExporter do
 
   describe ".sentry_approved?" do
     it "should be sentry approved user" do
-      user = User.new
+      user = FactoryGirl.create(:user)
       expect{ Room.sentry_approved?(user) }.not_to raise_error
     end
 
     it "it should not be sentry approved user" do
-      user = User.new
+      user = FactoryGirl.create(:user)
       allow(user).to receive(:is_authorised?).and_return(false)
       expect{ Room.sentry_approved?(user) }.to raise_error(RuntimeError)
       expect { raise RuntimeError, 'Unauthorised'}.to raise_error('Unauthorised')
