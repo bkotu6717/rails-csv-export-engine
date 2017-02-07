@@ -30,6 +30,16 @@ RSpec.describe Exporter::ExportController, :type => :controller  do
 	  end
 
 	describe "GET /generate" do
+		it "should not allow sentry unapproved" do
+	 		@room = FactoryGirl.create(:room)
+	 		allow(Room).to receive(:sentry_approved?).and_return(false)
+	 		allow(Room).to receive(:exportable_entities).and_return([@room])
+	 		allow(controller).to receive(:current_user).and_return(@user)
+	 		get :generate, {entity: :room, format: :csv}
+	 		res = JSON.parse(response.body)
+	 		expect(res['status']).to eq(403)
+	 		expect(res['message']).to eq('Unauthorised')
+	 	end
 	 	it "validates response headers" do
 	 		@room = FactoryGirl.create(:room)
 	 		allow(Room).to receive(:sentry_approved?).and_return(true)

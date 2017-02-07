@@ -10,7 +10,7 @@ describe Exporter::EntityExporter do
 
     it "it should not be sentry approved user" do
       user = FactoryGirl.create(:user)
-      allow(user).to receive(:is_authorised?).and_return(false)
+      allow(user).to receive(:is_authorized?).and_return(false)
       expect{ Room.sentry_approved?(user) }.to raise_error(RuntimeError)
       expect { raise RuntimeError, 'Unauthorised'}.to raise_error('Unauthorised')
     end
@@ -31,19 +31,51 @@ describe Exporter::EntityExporter do
 
   describe ".exportable_attributes" do
     it "should return exportable attributes" do
-      room = Room.new(name: 'Amruthesh', number: '45678', capacity: 20)
+      room = FactoryGirl.create(:room, name: 'Amruthesh', number: '45678', capacity: 20)
       expect(room.exportable_attributes([:name, :number, :capacity])).to eq(["Amruthesh", "45678", 20])
     end
   end
 
-  describe ".validated_privilege?(current_user)" do
-    it "validates if there is a privilege" do
-      user = User.new
-      Room.restrict_export_by_privilege(:privilege_name)
-      expect{ Room.sentry_approved?(user) }.not_to raise_error
+  describe ".validated_privilage?(current_user)" do
+    it "it should unauthorize for no privilage and no block provided" do
+      user = FactoryGirl.create(:user)
+      Room.set_export_validator
+      expect(Room.sentry_approved?(user)).to eq(false)
+    end
+    it "it should authorize for given privilage" do
+      user = FactoryGirl.create(:user)
+      Room.set_export_validator(:can_export_rooms)
+      expect(Room.sentry_approved?(user)).to eq(true)
+    end
+    it "it should unauthorize for a given block" do
+      user = FactoryGirl.create(:user)
       allow(user).to receive(:is_authorized?).and_return(false)
-      expect{ Room.sentry_approved?(user) }.to raise_error
-      Room.restrict_export_by_privilege(nil)
+      Room.set_export_validator { |user|
+        raise RuntimeError, 'Unauthorised' unless user.is_authorized?
+      }
+      expect { Room.sentry_approved?(user) }.to raise_error(RuntimeError)
+    end
+    it "it should authorize for a given block" do
+      user = FactoryGirl.create(:user)
+      Room.set_export_validator { |user|
+        raise RuntimeError, 'Unauthorised' unless user.is_authorized?
+      }
+      expect { Room.sentry_approved?(user) }.not_to raise_error
+    end
+    it "it should authorize for a given block and privilage" do
+      user = FactoryGirl.create(:user)
+      Room.set_export_validator(:can_export_rooms) { |user|
+        raise RuntimeError, 'Unauthorised' unless user.is_authorized?
+      }
+      expect { Room.sentry_approved?(user) }.not_to raise_error
+    end
+    it "it should unauthorize for given block and privilage" do
+      user = FactoryGirl.create(:user)
+      allow(user).to receive(:is_authorized?).and_return(false)
+      Room.set_export_validator(:can_export_rooms) { |user|
+        raise RuntimeError, 'Unauthorised' unless user.is_authorized?
+      }
+      expect { Room.sentry_approved?(user) }.to raise_error(RuntimeError)
     end
   end
 end

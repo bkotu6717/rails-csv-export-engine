@@ -1,9 +1,5 @@
 class User < ActiveRecord::Base
- 	def is_authorised?
-	  true
-	end
-
-	def is_authorized?(name)
+	def is_authorized?(name = nil)
 	  true
 	end
 end
