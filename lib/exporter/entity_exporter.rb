@@ -15,14 +15,15 @@ module Exporter
       def sentry_approved?(current_user)
         if !@validate_block.blank?
           return @validate_block.call(current_user)
-        else
+        elsif defined?(@privilege) and !@privilege.blank?
           return validated_privilege?(current_user)
+        elsif @validate_block.blank?
+          return true
         end
       end
 
       def validated_privilege?(current_user)
-        return false if !defined?(@privilege) or @privilege.blank?
-        raise RuntimeError, 'Unauthorised' unless current_user.is_authorized?(@privilege.to_sym)
+        raise RuntimeError, 'Unauthorised' unless current_user.authorised?(@privilege.to_sym)
         true
       end
 

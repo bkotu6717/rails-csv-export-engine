@@ -18,8 +18,8 @@ module Exporter
       @return_data = initialize_response_hash
       @klass = params[:entity].titleize.constantize
       begin
-        raise RuntimeError, 'Unauthorised' unless @klass.sentry_approved?(current_user)
-      rescue Exception => e
+        @klass.sentry_approved?(current_user)
+      rescue RuntimeError => e
         @return_data[:status] = 403
         @return_data[:message] = "Unauthorised"
         render json: @return_data and return
